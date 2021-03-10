@@ -1,3 +1,4 @@
+using System;
 using Lab1.Infrastructure;
 using Lab1.Interfaces;
 using Lab1.Interfaces.SqlRepositories;
@@ -6,6 +7,7 @@ using Lab1.Repositories.SQLRepositories;
 using Lab1.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +27,13 @@ namespace Lab1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<EfConfig.MyDbContext>(
+                options => options.UseMySql(
+                        "Datasource=172.17.0.2;Database=train;User=admin;Password=admin;", 
+                        new MySqlServerVersion(new Version(8, 0, 0)))
+                .EnableSensitiveDataLogging()
+                .EnableSensitiveDataLogging()
+            );
             services.AddControllers();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lab1", Version = "v1"}); });
             

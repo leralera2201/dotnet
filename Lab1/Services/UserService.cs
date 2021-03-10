@@ -7,24 +7,24 @@ namespace Lab1.Services
 {
     public class UserService : IUserService
     {
-        IGenericRepository<UserEntity, int> _repository;
+        IGenericRepository<User, int> _repository;
 
         public UserService(IUserRepository repository)
         {
             _repository = repository;
         }
         
-        public IEnumerable<UserEntity> GetAll()
+        public IEnumerable<User> GetAll()
         {
             return _repository.GetAll();
         }
 
-        public UserEntity GetOneById(int id)
+        public User GetOneById(int id)
         {
             return _repository.GetOneById(id);
         }
 
-        public void Create(UserEntity entity)
+        public void Create(User entity)
         {
             _repository.Create(entity);
         }
@@ -34,7 +34,7 @@ namespace Lab1.Services
             _repository.DeleteById(id);
         }
 
-        public void Update(UserEntity entity)
+        public void Update(User entity)
         {
             _repository.Update(entity);
         }

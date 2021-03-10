@@ -7,24 +7,24 @@ namespace Lab1.Services
 {
     public class StationService : IStationService
     {
-        IGenericRepository<StationEntity, int> _repository;
+        IGenericRepository<Station, int> _repository;
 
         public StationService(IStationRepository repository)
         {
             _repository = repository;
         }
         
-        public IEnumerable<StationEntity> GetAll()
+        public IEnumerable<Station> GetAll()
         {
             return _repository.GetAll();
         }
 
-        public StationEntity GetOneById(int id)
+        public Station GetOneById(int id)
         {
             return _repository.GetOneById(id);
         }
 
-        public void Create(StationEntity entity)
+        public void Create(Station entity)
         {
             _repository.Create(entity);
         }
@@ -34,7 +34,7 @@ namespace Lab1.Services
             _repository.DeleteById(id);
         }
 
-        public void Update(StationEntity entity)
+        public void Update(Station entity)
         {
             _repository.Update(entity);
         }

@@ -19,7 +19,7 @@ namespace Lab1.Controllers
         // GET: Get all entities
         [Route("")]
         [HttpGet]
-        public IEnumerable<StationEntity> GetAll()
+        public IEnumerable<Station> GetAll()
         {
             return _service.GetAll();
         }
@@ -27,7 +27,7 @@ namespace Lab1.Controllers
         // GET: Get single entity
         [Route("{id}")]
         [HttpGet]
-        public StationEntity GetById(int id)
+        public Station GetById(int id)
         {
             return _service.GetOneById(id);
         }
@@ -35,7 +35,7 @@ namespace Lab1.Controllers
         // POST: Create entity
         [Route("")]
         [HttpPost]
-        public void Create([FromBody] StationEntity entity)
+        public void Create([FromBody] Station entity)
         {
             _service.Create(entity);
         }
@@ -51,7 +51,7 @@ namespace Lab1.Controllers
         // PUT: Update single entity
         [Route("")]
         [HttpPut]
-        public void Update([FromBody] StationEntity entity)
+        public void Update([FromBody] Station entity)
         {
             _service.Update(entity);
         }

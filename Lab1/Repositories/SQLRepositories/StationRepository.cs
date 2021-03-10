@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Lab1.Repositories.SQLRepositories
 {
-    public class StationRepository : GenericRepository<StationEntity, int>, IStationRepository
+    public class StationRepository : GenericRepository<Station, int>, IStationRepository
     {
         private static readonly string _tableName = "station";
         private static readonly bool _isSoftDelete = true;
