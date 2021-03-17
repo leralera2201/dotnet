@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lab1.Entities;
 using Lab1.Interfaces.SqlServices;
 using Microsoft.AspNetCore.Mvc;
@@ -19,41 +20,41 @@ namespace Lab1.Controllers
         // GET: Get all entities
         [Route("")]
         [HttpGet]
-        public IEnumerable<Station> GetAll()
+        public async Task<IEnumerable<Station>> GetAll()
         {
-            return _service.GetAll();
+            return await _service.GetAll();
         }
 
         // GET: Get single entity
         [Route("{id}")]
         [HttpGet]
-        public Station GetById(int id)
+        public async Task<Station> GetById(int id)
         {
-            return _service.GetOneById(id);
+            return await _service.GetOneById(id);
         }
 
         // POST: Create entity
         [Route("")]
         [HttpPost]
-        public void Create([FromBody] Station entity)
+        public async Task<Station> Create([FromBody] Station entity)
         {
-            _service.Create(entity);
+            return await _service.Create(entity);
         }
 
         // DELETE: Delete single entity by id
         [Route("{id}")]
         [HttpDelete]
-        public void DeleteById(int id)
+        public async Task<int> DeleteById(int id)
         {
-            _service.DeleteById(id);
+            return await _service.DeleteById(id);
         }
 
         // PUT: Update single entity
         [Route("")]
         [HttpPut]
-        public void Update([FromBody] Station entity)
+        public async Task<Station> Update([FromBody] Station entity)
         {
-            _service.Update(entity);
+            return await _service.Update(entity);
         }
     }
 }

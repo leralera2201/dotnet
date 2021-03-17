@@ -7,26 +7,26 @@ using Lab1.Interfaces.SqlServices;
 
 namespace Lab1.Services
 {
-    public class UserService : IUserService
+    public class RouteService : IRouteService
     {
-        IGenericRepository<User, int> _repository;
+        IGenericRepository<Route, int> _repository;
 
-        public UserService(IUnitOfWork unitOfWork)
+        public RouteService(IUnitOfWork unitOfWork)
         {
-            _repository = unitOfWork._userRepository;
+            _repository = unitOfWork._routeRepository;
         }
-        
-        public async Task<IEnumerable<User>> GetAll()
+
+        public async Task<IEnumerable<Route>> GetAll()
         {
             return await _repository.GetAll();
         }
 
-        public async Task<User> GetOneById(int id)
+        public async Task<Route> GetOneById(int id)
         {
             return await _repository.GetOneById(id);
         }
 
-        public async Task<User> Create(User entity)
+        public async Task<Route> Create(Route entity)
         {
             return await _repository.Create(entity);
         }
@@ -36,7 +36,7 @@ namespace Lab1.Services
             return await _repository.DeleteById(id);
         }
 
-        public async Task<User> Update(User entity)
+        public async Task<Route> Update(Route entity)
         {
             return await _repository.Update(entity);
         }

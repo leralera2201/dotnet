@@ -7,26 +7,26 @@ using Lab1.Interfaces.SqlServices;
 
 namespace Lab1.Services
 {
-    public class UserService : IUserService
+    public class TicketService : ITicketService
     {
-        IGenericRepository<User, int> _repository;
+        private IGenericRepository<Ticket, int> _repository;
 
-        public UserService(IUnitOfWork unitOfWork)
+        public TicketService(IUnitOfWork unitOfWork)
         {
-            _repository = unitOfWork._userRepository;
+            _repository = unitOfWork._ticketRepository;
         }
-        
-        public async Task<IEnumerable<User>> GetAll()
+
+        public async Task<IEnumerable<Ticket>> GetAll()
         {
             return await _repository.GetAll();
         }
 
-        public async Task<User> GetOneById(int id)
+        public async Task<Ticket> GetOneById(int id)
         {
             return await _repository.GetOneById(id);
         }
 
-        public async Task<User> Create(User entity)
+        public async Task<Ticket> Create(Ticket entity)
         {
             return await _repository.Create(entity);
         }
@@ -36,7 +36,7 @@ namespace Lab1.Services
             return await _repository.DeleteById(id);
         }
 
-        public async Task<User> Update(User entity)
+        public async Task<Ticket> Update(Ticket entity)
         {
             return await _repository.Update(entity);
         }

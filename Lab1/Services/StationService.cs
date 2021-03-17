@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lab1.Entities;
+using Lab1.Interfaces;
 using Lab1.Interfaces.SqlRepositories;
 using Lab1.Interfaces.SqlServices;
 
@@ -9,34 +11,34 @@ namespace Lab1.Services
     {
         IGenericRepository<Station, int> _repository;
 
-        public StationService(IStationRepository repository)
+        public StationService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _repository = unitOfWork._stationRepository;
         }
         
-        public IEnumerable<Station> GetAll()
+        public async Task<IEnumerable<Station>> GetAll()
         {
-            return _repository.GetAll();
+            return await _repository.GetAll();
         }
 
-        public Station GetOneById(int id)
+        public async Task<Station> GetOneById(int id)
         {
-            return _repository.GetOneById(id);
+            return await _repository.GetOneById(id);
         }
 
-        public void Create(Station entity)
+        public async Task<Station> Create(Station entity)
         {
-            _repository.Create(entity);
+            return await _repository.Create(entity);
         }
 
-        public void DeleteById(int id)
+        public async Task<int> DeleteById(int id)
         {
-            _repository.DeleteById(id);
+            return await _repository.DeleteById(id);
         }
 
-        public void Update(Station entity)
+        public async Task<Station> Update(Station entity)
         {
-            _repository.Update(entity);
+            return await _repository.Update(entity);
         }
     }
 }

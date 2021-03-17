@@ -1,18 +1,18 @@
 using System.Collections.Generic;
-using Lab1.Entities;
+using System.Threading.Tasks;
 
 namespace Lab1.Interfaces
 {
     public interface IGenericCrudService<TEntity, TId> where TEntity : IBaseEntity<TId>
     {
-        IEnumerable<TEntity> GetAll();
+        Task<IEnumerable<TEntity>> GetAll();
 
-        TEntity GetOneById(TId id);
+        Task<TEntity> GetOneById(TId id);
 
-        void Create(TEntity entity);
+        Task<TEntity> Create(TEntity entity);
 
-        void DeleteById(TId id);
+        Task<int> DeleteById(TId id);
 
-        void Update(TEntity entity);
+        Task<TEntity> Update(TEntity entity);
     }
 }

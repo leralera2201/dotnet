@@ -1,90 +1,57 @@
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using Dapper;
+using System.Threading.Tasks;
 using Lab1.Interfaces;
 using Lab1.Interfaces.SqlRepositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lab1.Repositories
 {
-    public abstract class GenericRepository<TEntity, TId> : IGenericRepository<TEntity, TId> where TEntity : IBaseEntity<TId>
+    public class GenericRepository<TEntity, TId> : IGenericRepository<TEntity, TId> where TEntity : class, IBaseEntity<TId>
     {
-        protected IConnectionFactory _connectionFactory;
-        private readonly string _tableName;
-        private readonly bool _isSoftDelete;
+        protected DbContext _dbContext;
+        protected DbSet<TEntity> _entities;
 
-        public GenericRepository(IConnectionFactory connectionFactory, string tableName, bool isSoftDelete)
+        public GenericRepository(EfConfig.MyDbContext dbContext)
         {
-            _connectionFactory = connectionFactory;
-            _tableName = tableName;
-            _isSoftDelete = isSoftDelete;
+            _dbContext = dbContext;
+            _entities = dbContext.Set<TEntity>();
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public async Task<IEnumerable<TEntity>> GetAll()
         {
-            using (var connection = _connectionFactory.GetSqlConnection)
-            {
-                var values = new { table_name = _tableName };
-                return connection.Query<TEntity>("GetAllRecordsFromTable", values, commandType: CommandType.StoredProcedure).ToList();
-            }
+            return await _entities.ToListAsync();
         }
 
-        public TEntity GetOneById(TId id)
+        public async Task<TEntity> GetOneById(TId id)
         {
-            using (var connection = _connectionFactory.GetSqlConnection)
-            {
-                var values = new { table_name = _tableName, id };
-                return connection.QuerySingle<TEntity>("GetRecordFromTableById", values, commandType: CommandType.StoredProcedure);
-            }
-        }
-        
-        public void DeleteById(TId id)
-        {
-            using (var connection = _connectionFactory.GetSqlConnection)
-            {
-                var values = new { table_name = _tableName, id };
-                connection.Query("DeleteFromTableById", values, commandType: CommandType.StoredProcedure);
-            }
+            return await _entities.FindAsync(id);
         }
 
-        public void Create(TEntity entity)
+        public async Task<TEntity> Create(TEntity entity)
         {
-            var columns = GetColumns();
-            var stringOfColumns = string.Join(", ", columns.Select(ToSnakeCase));
-            var stringOfProperties = string.Join(", ", columns.Select(e => entity.GetType().GetProperty(e).GetValue(entity, null)).Select(s => $"'{s}'"));
-            
-            using (var connection = _connectionFactory.GetSqlConnection)
-            {
-                var values = new {table_name = _tableName, colums = stringOfColumns, properties = stringOfProperties};
-                connection.Query("InsertEntityIntoTable", values, commandType: CommandType.StoredProcedure);
-            }
+            await _entities.AddAsync(entity);
+            await SaveChanges();
+            return entity;
         }
 
-        public void Update(TEntity entity)
+        public async Task<int> DeleteById(TId id)
         {
-            var columns = GetColumns();
-            var fields = string.Join(", ", columns.Select(e => $"{ToSnakeCase(e)}='{entity.GetType().GetProperty(e).GetValue(entity, null)}'"));
-            using (var connection = _connectionFactory.GetSqlConnection)
-            {
-                var values = new { table_name = _tableName, id = entity.Id, fields };
-                connection.Query("UpdateEntityInsideTable", values, commandType: CommandType.StoredProcedure);
-            }
+            TEntity entity = await _entities.FindAsync(id);
+            _dbContext.Set<TEntity>().Remove(entity);
+            return await SaveChanges();
         }
-        
-        private IEnumerable<string> GetColumns()
+
+        public async Task<TEntity> Update(TEntity entity)
         {
-            return typeof(TEntity)
-                .GetProperties()
-                .Where(e => e.Name != "Id" && !e.PropertyType.GetTypeInfo().IsGenericType)
-                .Select(e => e.Name);
+            _entities.Update(entity);
+            await SaveChanges();
+            return entity;
         }
-        
-        public static string ToSnakeCase(string str) 
+
+        private async Task<int> SaveChanges()
         {
-            Regex pattern = new Regex(@"[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+");
-            return string.Join("_", pattern.Matches(str)).ToLower();
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }

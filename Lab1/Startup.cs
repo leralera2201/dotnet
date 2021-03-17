@@ -29,7 +29,7 @@ namespace Lab1
         {
             services.AddDbContext<EfConfig.MyDbContext>(
                 options => options.UseMySql(
-                        "Datasource=172.17.0.2;Database=train;User=admin;Password=admin;", 
+                        Configuration.GetConnectionString("DefaultConnection"), 
                         new MySqlServerVersion(new Version(8, 0, 0)))
                 .EnableSensitiveDataLogging()
                 .EnableSensitiveDataLogging()
@@ -40,14 +40,24 @@ namespace Lab1
             #region SQL repositories
             services.AddTransient<IStationRepository, StationRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IRouteRepository, RouteRepository>();
+            services.AddTransient<IStoppageRepository, StoppageRepository>();
+            services.AddTransient<ITicketRepository, TicketRepository>();
+            services.AddTransient<ITrainRepository, TrainRepository>();
             #endregion
 
             #region SQL services
             services.AddTransient<IStationService, StationService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IRouteService, RouteService>();
+            services.AddTransient<IStoppageService, StoppageService>();
+            services.AddTransient<ITicketService, TicketService>();
+            services.AddTransient<ITrainService, TrainService>();
             #endregion
             
             services.AddTransient<IConnectionFactory, ConnectionFactory>();
+
+            services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
             
             services.AddSingleton<IConfiguration>(Configuration);
         }
