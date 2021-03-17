@@ -1,44 +1,56 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using Lab1.DTOs.TrainDTOs;
 using Lab1.Entities;
 using Lab1.Interfaces;
-using Lab1.Interfaces.SqlRepositories;
 using Lab1.Interfaces.SqlServices;
 
 namespace Lab1.Services
 {
     public class TrainService : ITrainService
     {
-        IGenericRepository<Train, int> _repository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public TrainService(IUnitOfWork unitOfWork)
+        public TrainService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = unitOfWork._trainRepository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
-
+        
         public async Task<IEnumerable<Train>> GetAll()
         {
-            return await _repository.GetAll();
+            return await _unitOfWork._trainRepository.GetAll();
         }
 
         public async Task<Train> GetOneById(int id)
         {
-            return await _repository.GetOneById(id);
+            return await _unitOfWork._trainRepository.GetOneById(id);
         }
 
-        public async Task<Train> Create(Train entity)
+        public async Task<Train> Create(TrainRequestDto dto)
         {
-            return await _repository.Create(entity);
+            Train entity = _mapper.Map<TrainRequestDto, Train>(dto);
+            Train train = await _unitOfWork._trainRepository.Create(entity);
+            await _unitOfWork.SaveChanges();
+            return train;
         }
 
         public async Task<int> DeleteById(int id)
         {
-            return await _repository.DeleteById(id);
+            int byId = await _unitOfWork._trainRepository.DeleteById(id);
+            await _unitOfWork.SaveChanges();
+            return byId;
         }
 
-        public async Task<Train> Update(Train entity)
+        public async Task<Train> Update(int id, TrainRequestDto dto)
         {
-            return await _repository.Update(entity);
+            Train entity = _mapper.Map<TrainRequestDto, Train>(dto);
+            entity.Id = id;
+            Train train = await _unitOfWork._trainRepository.Update(entity);
+            await _unitOfWork.SaveChanges();
+            return train;
         }
     }
 }

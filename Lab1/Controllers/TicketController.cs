@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
-using Lab1.DTOs.UserDTOs;
+using Lab1.DTOs.TicketDTOs;
 using Lab1.Entities;
 using Lab1.Interfaces.SqlServices;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lab1.Controllers
 {
     [ApiController]
-    [Route("api/v1/users")]
-    public class UserController : ControllerBase
+    [Route("api/v1/tickets")]
+    public class TicketController : ControllerBase
     {
-        private readonly IUserService _service;
+        private readonly ITicketService _service;
 
-        public UserController(IUserService service)
+        public TicketController(ITicketService service)
         {
             _service = service;
         }
@@ -22,7 +21,7 @@ namespace Lab1.Controllers
         // GET: Get all entities
         [Route("")]
         [HttpGet]
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<Ticket>> GetAll()
         {
             return await _service.GetAll();
         }
@@ -30,7 +29,7 @@ namespace Lab1.Controllers
         // GET: Get single entity
         [Route("{id}")]
         [HttpGet]
-        public async Task<User> GetById(int id)
+        public async Task<Ticket> GetById(int id)
         {
             return await _service.GetOneById(id);
         }
@@ -38,7 +37,7 @@ namespace Lab1.Controllers
         // POST: Create entity
         [Route("")]
         [HttpPost]
-        public async Task<User> Create([FromBody] UserRequestDto dto)
+        public async Task<Ticket> Create([FromBody] TicketRequestDto dto)
         {
             return await _service.Create(dto);
         }
@@ -54,7 +53,7 @@ namespace Lab1.Controllers
         // PUT: Update single entity
         [Route("{id}")]
         [HttpPut]
-        public async Task<User> Update(int id, [FromBody] UserRequestDto dto)
+        public async Task<Ticket> Update(int id, [FromBody] TicketRequestDto dto)
         {
             return await _service.Update(id, dto);
         }

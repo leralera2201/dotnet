@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lab1.DTOs.TrainDTOs;
 using Lab1.Entities;
 
 namespace Lab1.Interfaces.SqlServices
@@ -10,10 +11,10 @@ namespace Lab1.Interfaces.SqlServices
 
         Task<Train> GetOneById(int id);
 
-        Task<Train> Create(Train entity);
+        Task<Train> Create(TrainRequestDto entity);
 
         Task<int> DeleteById(int id);
 
-        Task<Train> Update(Train entity);
+        Task<Train> Update(int id, TrainRequestDto entity);
     }
 }

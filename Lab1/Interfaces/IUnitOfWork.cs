@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Lab1.Interfaces.SqlRepositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,6 @@ namespace Lab1.Interfaces
         ITicketRepository _ticketRepository { get; }
         ITrainRepository _trainRepository { get; }
 
-        void SaveChanges();
+        Task<int> SaveChanges();
     }
 }

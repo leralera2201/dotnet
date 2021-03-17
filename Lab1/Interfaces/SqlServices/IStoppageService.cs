@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lab1.DTOs.StoppageDTOs;
 using Lab1.Entities;
 
 namespace Lab1.Interfaces.SqlServices
@@ -10,10 +11,10 @@ namespace Lab1.Interfaces.SqlServices
 
         Task<Stoppage> GetOneById(int id);
 
-        Task<Stoppage> Create(Stoppage entity);
+        Task<Stoppage> Create(StoppageRequestDto entity);
 
         Task<int> DeleteById(int id);
 
-        Task<Stoppage> Update(Stoppage entity);
+        Task<Stoppage> Update(int id, StoppageRequestDto entity);
     }
 }

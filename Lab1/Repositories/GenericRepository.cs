@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lab1.Interfaces;
 using Lab1.Interfaces.SqlRepositories;
@@ -31,27 +30,25 @@ namespace Lab1.Repositories
         public async Task<TEntity> Create(TEntity entity)
         {
             await _entities.AddAsync(entity);
-            await SaveChanges();
             return entity;
         }
 
-        public async Task<int> DeleteById(TId id)
+        public async Task<TId> DeleteById(TId id)
         {
             TEntity entity = await _entities.FindAsync(id);
             _dbContext.Set<TEntity>().Remove(entity);
-            return await SaveChanges();
+            return id;
         }
 
         public async Task<TEntity> Update(TEntity entity)
         {
             _entities.Update(entity);
-            await SaveChanges();
             return entity;
         }
 
-        private async Task<int> SaveChanges()
+        public async Task<bool> ExistsById(int id)
         {
-            return await _dbContext.SaveChangesAsync();
+            return await _entities.AnyAsync(entity => entity.Id.Equals(id));
         }
     }
 }

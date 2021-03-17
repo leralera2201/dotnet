@@ -1,44 +1,65 @@
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
+using AutoMapper;
+using Lab1.DTOs.TicketDTOs;
 using Lab1.Entities;
 using Lab1.Interfaces;
-using Lab1.Interfaces.SqlRepositories;
 using Lab1.Interfaces.SqlServices;
 
 namespace Lab1.Services
 {
     public class TicketService : ITicketService
     {
-        private IGenericRepository<Ticket, int> _repository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public TicketService(IUnitOfWork unitOfWork)
+        public TicketService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = unitOfWork._ticketRepository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
-
+        
         public async Task<IEnumerable<Ticket>> GetAll()
         {
-            return await _repository.GetAll();
+            return await _unitOfWork._ticketRepository.GetAll();
         }
 
         public async Task<Ticket> GetOneById(int id)
         {
-            return await _repository.GetOneById(id);
+            return await _unitOfWork._ticketRepository.GetOneById(id);
         }
 
-        public async Task<Ticket> Create(Ticket entity)
+        public async Task<Ticket> Create(TicketRequestDto dto)
         {
-            return await _repository.Create(entity);
+            Ticket entity = _mapper.Map<TicketRequestDto, Ticket>(dto);
+            entity.Route = await _unitOfWork._routeRepository.GetOneById(dto.RouteId);
+            
+            Ticket ticket = await _unitOfWork._ticketRepository.Create(entity);
+            await _unitOfWork.SaveChanges();
+            return ticket;
         }
 
         public async Task<int> DeleteById(int id)
         {
-            return await _repository.DeleteById(id);
+            if (!await _unitOfWork._ticketRepository.ExistsById(id))
+                throw new HttpRequestException("Entity with specified id not found", null, HttpStatusCode.NotFound);
+            
+            int byId = await _unitOfWork._ticketRepository.DeleteById(id);
+            await _unitOfWork.SaveChanges();
+            return byId;
         }
 
-        public async Task<Ticket> Update(Ticket entity)
+        public async Task<Ticket> Update(int id, TicketRequestDto dto)
         {
-            return await _repository.Update(entity);
+            Ticket entity = _mapper.Map<TicketRequestDto, Ticket>(dto);
+            entity.Id = id;
+            entity.Route = await _unitOfWork._routeRepository.GetOneById(dto.RouteId);
+
+            Ticket ticket = await _unitOfWork._ticketRepository.Update(entity);
+            await _unitOfWork.SaveChanges();
+            return ticket;
         }
     }
 }

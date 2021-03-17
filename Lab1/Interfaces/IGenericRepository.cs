@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Lab1.Interfaces.SqlRepositories
 {
-    public interface IGenericRepository<TEntity, TId> where TEntity : IBaseEntity<TId>
+    public interface IGenericRepository<TEntity, TId> where TEntity : class, IBaseEntity<TId>
     {
         Task<IEnumerable<TEntity>> GetAll();
 
@@ -12,8 +13,10 @@ namespace Lab1.Interfaces.SqlRepositories
 
         Task<TEntity> Create(TEntity entity);
 
-        Task<int> DeleteById(TId id);
+        Task<TId> DeleteById(TId id);
 
         Task<TEntity> Update(TEntity entity);
+
+        Task<bool> ExistsById(int id);
     }
 }

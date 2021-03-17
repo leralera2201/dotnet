@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lab1.DTOs.StationDTOs;
 using Lab1.Entities;
 using Lab1.Interfaces.SqlServices;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Lab1.Controllers
     [Route("api/v1/stations")]
     public class StationController : ControllerBase
     {
-        private IStationService _service;
+        private readonly IStationService _service;
 
         public StationController(IStationService service)
         {
@@ -36,9 +37,9 @@ namespace Lab1.Controllers
         // POST: Create entity
         [Route("")]
         [HttpPost]
-        public async Task<Station> Create([FromBody] Station entity)
+        public async Task<Station> Create([FromBody] StationRequestDto dto)
         {
-            return await _service.Create(entity);
+            return await _service.Create(dto);
         }
 
         // DELETE: Delete single entity by id
@@ -50,11 +51,11 @@ namespace Lab1.Controllers
         }
 
         // PUT: Update single entity
-        [Route("")]
+        [Route("{id}")]
         [HttpPut]
-        public async Task<Station> Update([FromBody] Station entity)
+        public async Task<Station> Update(int id, [FromBody] StationRequestDto dto)
         {
-            return await _service.Update(entity);
+            return await _service.Update(id, dto);
         }
     }
 }

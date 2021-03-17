@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Lab1.DTOs.TicketDTOs;
 using Lab1.Entities;
 
 namespace Lab1.Interfaces.SqlServices
@@ -10,10 +11,10 @@ namespace Lab1.Interfaces.SqlServices
 
         Task<Ticket> GetOneById(int id);
 
-        Task<Ticket> Create(Ticket entity);
+        Task<Ticket> Create(TicketRequestDto entity);
 
         Task<int> DeleteById(int id);
 
-        Task<Ticket> Update(Ticket entity);
+        Task<Ticket> Update(int id, TicketRequestDto entity);
     }
 }

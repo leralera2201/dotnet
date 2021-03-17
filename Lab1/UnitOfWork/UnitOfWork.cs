@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Lab1.Interfaces;
 using Lab1.Interfaces.SqlRepositories;
 using Microsoft.EntityFrameworkCore;
@@ -27,9 +28,9 @@ namespace Lab1.UnitOfWork
             _trainRepository = trainRepository;
         }
         
-        public async void SaveChanges()
+        public async Task<int> SaveChanges()
         {
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }

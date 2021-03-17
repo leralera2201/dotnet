@@ -3,6 +3,7 @@ using Lab1.Infrastructure;
 using Lab1.Interfaces;
 using Lab1.Interfaces.SqlRepositories;
 using Lab1.Interfaces.SqlServices;
+using Lab1.Mappers;
 using Lab1.Repositories.SQLRepositories;
 using Lab1.Services;
 using Microsoft.AspNetCore.Builder;
@@ -34,8 +35,20 @@ namespace Lab1
                 .EnableSensitiveDataLogging()
                 .EnableSensitiveDataLogging()
             );
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options => 
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lab1", Version = "v1"}); });
+
+            #region AutoMapper
+            services.AddAutoMapper(
+                typeof(UserProfile), 
+                typeof(StationProfile),
+                typeof(TrainProfile),
+                typeof(TicketProfile),
+                typeof(StoppageProfile),
+                typeof(RouteProfile));
+            #endregion
+ 
             
             #region SQL repositories
             services.AddTransient<IStationRepository, StationRepository>();
@@ -54,11 +67,11 @@ namespace Lab1
             services.AddTransient<ITicketService, TicketService>();
             services.AddTransient<ITrainService, TrainService>();
             #endregion
-            
+
             services.AddTransient<IConnectionFactory, ConnectionFactory>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
-            
+
             services.AddSingleton<IConfiguration>(Configuration);
         }
 
