@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Lab1.Entities;
 using Lab1.Interfaces.SqlRepositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using Lab1.Entities.Parameters;
 
 namespace Lab1.Repositories.SQLRepositories
 {
@@ -12,15 +14,23 @@ namespace Lab1.Repositories.SQLRepositories
         {
         }
 
-        public new async Task<IEnumerable<User>> GetAll()
+        public new async Task<IEnumerable<User>> GetAll(UserParameters parameters)
         {
-            return await _entities.Include(u => u.Tickets).ToListAsync();
+            var list = await _entities.Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize).ToListAsync();
+
+            if (!string.IsNullOrEmpty(parameters.Email))
+            {
+                list = list.FindAll(station => station.Email == parameters.Email);
+            }
+
+            return list;
 
         }
 
         public new async Task<User> GetOneById(int id)
         {
-            return await _entities.Include(u => u.Tickets).FirstAsync((u => u.Id.Equals(id)));
+            return await _entities.FirstAsync((u => u.Id.Equals(id)));
         }
     }
 }

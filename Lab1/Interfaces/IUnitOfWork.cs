@@ -7,12 +7,12 @@ namespace Lab1.Interfaces
     public interface IUnitOfWork
     {
         DbContext _dbContext { get; }
-        IStationRepository _stationRepository { get; }
         IUserRepository _userRepository { get; }
-        IRouteRepository _routeRepository { get; }
-        IStoppageRepository _stoppageRepository { get; }
-        ITicketRepository _ticketRepository { get; }
-        ITrainRepository _trainRepository { get; }
+        ICategoryRepository _categoryRepository { get; }
+        ITagRepository _tagRepository { get; }
+        IProductRepository _productRepository { get; }
+        IClientRepository _clientRepository { get; }
+        IOrderRepository _orderRepository { get; }
 
         Task<int> SaveChanges();
     }

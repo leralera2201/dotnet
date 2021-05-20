@@ -10,17 +10,13 @@ namespace Lab1.Entities
         public int Id { get; set; }
         
         [Required]
-        public String FirstName { get; set; }
-
-        [Required]
-        public String LastName { get; set; }
+        public string Email { get; set; }
         
         [Required]
-        public String Email { get; set; }
-        
-        [Required]
-        public String Password { get; set; }
+        public string Password { get; set; }
 
-        public List<Ticket> Tickets { get; set; } = new List<Ticket>();
+       // public int ClientId { get; set; }
+       // public Client Client { get; set; }
+
     }
 }

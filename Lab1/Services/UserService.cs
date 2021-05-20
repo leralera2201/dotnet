@@ -5,6 +5,7 @@ using Lab1.DTOs.UserDTOs;
 using Lab1.Entities;
 using Lab1.Interfaces;
 using Lab1.Interfaces.SqlServices;
+using Lab1.Entities.Parameters;
 
 namespace Lab1.Services
 {
@@ -19,9 +20,9 @@ namespace Lab1.Services
             _mapper = mapper;
         }
         
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<IEnumerable<User>> GetAll(UserParameters parameters)
         {
-            return await _unitOfWork._userRepository.GetAll();
+            return await _unitOfWork._userRepository.GetAll(parameters);
         }
 
         public async Task<User> GetOneById(int id)

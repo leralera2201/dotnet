@@ -14,33 +14,24 @@ namespace Lab1
             {
                 base.OnModelCreating(modelBuilder);
 
-                modelBuilder.Entity<Stoppage>()
-                    .HasOne(s => s.Station)
-                    .WithMany(s => s.Stoppages);
+   
+                modelBuilder.Entity<Product>()
+                    .HasOne(s => s.Category)
+                    .WithMany(s => s.Products);
 
-                modelBuilder.Entity<Ticket>()
-                    .HasOne(t => t.User)
-                    .WithMany(u => u.Tickets);
+                modelBuilder.Entity<Order>()
+                   .HasOne(s => s.Client)
+                   .WithMany(s => s.Orders);
 
-                modelBuilder.Entity<Ticket>()
-                    .HasOne(t => t.Route)
-                    .WithMany(r => r.Tickets);
-
-                modelBuilder.Entity<Route>()
-                    .HasOne(r => r.Train)
-                    .WithMany(t => t.Routes);
-
-                modelBuilder.Entity<Route>()
-                    .HasMany(r => r.Stoppages)
-                    .WithOne(s => s.Route);
             }
 
             public DbSet<User> Users { get; set; }
-            public DbSet<Station> Stations { get; set; }
-            public DbSet<Stoppage> Stoppages { get; set; }
-            public DbSet<Train> Trains { get; set; }
-            public DbSet<Route> Routes { get; set; }
-            public DbSet<Ticket> Tickets { get; set; }
+
+            public DbSet<Category> Categories { get; set; }
+            public DbSet<Product> Products { get; set; }
+            public DbSet<Tag> Tags { get; set; }
+            public DbSet<Client> Clients { get; set; }
+            public DbSet<Order> Orders { get; set; }
         }
     }
 }

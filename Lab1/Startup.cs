@@ -13,6 +13,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
+using Lab1.Filters;
+using Lab1.Entities;
+using Lab1.Utils;
 
 namespace Lab1
 {
@@ -28,47 +32,61 @@ namespace Lab1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddCors();
+            services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+
+
             services.AddDbContext<EfConfig.MyDbContext>(
-                options => options.UseMySql(
-                        Configuration.GetConnectionString("DefaultConnection"), 
-                        new MySqlServerVersion(new Version(8, 0, 0)))
-                .EnableSensitiveDataLogging()
+                options => options.UseSqlServer(
+                        Configuration.GetConnectionString("DefaultConnection"),
+                        options => options.EnableRetryOnFailure())
                 .EnableSensitiveDataLogging()
             );
-            services.AddControllers().AddNewtonsoftJson(options => 
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddControllers(options =>
+               options.Filters.Add(new ValidationFilter())
+           ).AddFluentValidation(options =>
+               options.RegisterValidatorsFromAssemblyContaining<Startup>()
+           ).AddNewtonsoftJson(options =>
+               options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Lab1", Version = "v1"}); });
 
             #region AutoMapper
             services.AddAutoMapper(
-                typeof(UserProfile), 
-                typeof(StationProfile),
-                typeof(TrainProfile),
-                typeof(TicketProfile),
-                typeof(StoppageProfile),
-                typeof(RouteProfile));
+                typeof(UserProfile),
+                typeof(CategoryProfile),
+                typeof(TagProfile),
+                typeof(ProductProfile),
+                typeof(ClientProfile),
+                typeof(OrderProfile));
             #endregion
  
             
             #region SQL repositories
-            services.AddTransient<IStationRepository, StationRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IRouteRepository, RouteRepository>();
-            services.AddTransient<IStoppageRepository, StoppageRepository>();
-            services.AddTransient<ITicketRepository, TicketRepository>();
-            services.AddTransient<ITrainRepository, TrainRepository>();
+            services.AddTransient<ICategoryRepository, CategoryRepository>();
+            services.AddTransient<ITagRepository, TagRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             #endregion
 
             #region SQL services
-            services.AddTransient<IStationService, StationService>();
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IRouteService, RouteService>();
-            services.AddTransient<IStoppageService, StoppageService>();
-            services.AddTransient<ITicketService, TicketService>();
-            services.AddTransient<ITrainService, TrainService>();
+            services.AddTransient<ICategoryService, CategoryService>();
+            services.AddTransient<ITagService, TagService>();
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IClientService, ClientService>();
+            services.AddTransient<IOrderService, OrderService>();
             #endregion
 
             services.AddTransient<IConnectionFactory, ConnectionFactory>();
+            services.AddTransient<ISortUtils<Category>, SortUtils<Category>>();
 
             services.AddTransient<IUnitOfWork, UnitOfWork.UnitOfWork>();
 
@@ -88,6 +106,8 @@ namespace Lab1
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors();
 
             app.UseAuthorization();
 
